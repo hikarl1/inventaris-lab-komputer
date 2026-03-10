@@ -7,17 +7,11 @@ use Illuminate\Http\Request;
 
 class LabAssetController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
     {
-        return response()->json(LabAsset::all(), 200);
+        return response()->json(LabAsset::all());
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
         $validated = $request->validate([
@@ -27,32 +21,25 @@ class LabAssetController extends Controller
             'stock' => 'required|integer',
             'condition' => 'required'
         ]);
-        $asset = LabAsset::create($validated);
-        return response()->json($asset, 201);
-    }
-    
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
-    {
-        //
+        return response()->json(LabAsset::create($validated), 201);
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
+    public function show($id)
     {
-        //
+        $asset = LabAsset::find($id);
+        return $asset ? response()->json($asset) : response()->json(['message' => 'Gak ketemu!'], 404);
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
+    public function update(Request $request, $id)
     {
-        //
+        $asset = LabAsset::findOrFail($id);
+        $asset->update($request->all());
+        return response()->json(['message' => 'Berhasil diupdate!', 'data' => $asset]);
+    }
+
+    public function destroy($id)
+    {
+        LabAsset::destroy($id);
+        return response()->json(['message' => 'Barang dihapus!']);
     }
 }
